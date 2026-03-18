@@ -42,14 +42,13 @@ def extract_reviews(driver):
             if b:
                 dates.append(b.get_text(strip=True))
 
-    blacklist = BLACKLIST
     route_index = 0
     date_index = 0
 
     for review_tag in review_spans:
         review_text = review_tag.get_text(strip=True)
         review_lower = review_text.lower()
-        if any(word in review_lower for word in blacklist):
+        if any(word in review_lower for word in BLACKLIST):
             continue
 
         # --- ruta ---
@@ -88,35 +87,22 @@ def extract_reviews(driver):
             pass
 
         # --- origen del usuario ---
-        # --- origen del usuario (CORREGIDO SEGÚN TU CAPTURA) ---
         user_origin = "Desconocido"
         try:
-            # 1. Buscamos el bloque del autor que está justo antes del texto de la reseña
-            # En tu imagen la clase es "QIHsu"
             author_box = review_tag.find_previous("div", class_="QIHsu")
-            
             if author_box:
-                # 2. Buscamos la sección de datos (vYLts)
                 geo_section = author_box.find("div", class_="vYLts")
                 if geo_section:
-                    # Buscamos los elementos de texto (biGQs)
-                    # En tu imagen, la ubicación es un div con clase 'navcl'
                     candidates = geo_section.find_all("div", class_="biGQs")
                     for c in candidates:
                         text = c.get_text(strip=True)
-                        
-                        # FILTROS CRÍTICOS:
-                        # - Que no contenga "contribu" (para saltar '1 contribución')
-                        # - Que no sea solo un número
-                        # - Que tenga la clase 'navcl' (el nombre de usuario NO la tiene, la ubicación SÍ)
                         if (text and 
                             "contribu" not in text.lower() and 
                             not text.isdigit() and 
                             "navcl" in c.get("class", [])):
-                            
                             user_origin = text
-                            break # En cuanto encontramos la ciudad, paramos
-        except Exception:
+                            break
+        except:
             pass
 
         # --- separar origin/destination ---
@@ -136,16 +122,30 @@ def extract_reviews(driver):
 
 def save_reviews(reviews):
     df_new = pd.DataFrame(reviews)
+
     if os.path.exists(OUTPUT_FILE):
         df_old = pd.read_csv(OUTPUT_FILE)
         df_total = pd.concat([df_old, df_new])
         df_total.drop_duplicates(inplace=True)
+
+        if "id" in df_total.columns:
+            start_id = int(df_total["id"].max()) + 1
+        else:
+            start_id = 1
     else:
         df_total = df_new
+        start_id = 1
+
+    # Resetear índice y asignar IDs
+    df_total = df_total.reset_index(drop=True)
+    df_total["id"] = range(start_id, start_id + len(df_total))
+
+    # Mover 'id' a la primera columna
+    cols = ["id"] + [col for col in df_total.columns if col != "id"]
+    df_total = df_total[cols]
 
     df_total.to_csv(OUTPUT_FILE, index=False)
     print("Total guardadas:", len(df_total))
-
 
 if __name__ == "__main__":
     driver = connect_to_chrome()
