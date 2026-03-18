@@ -32,9 +32,8 @@ def extract_reviews(driver):
     review_spans = soup.select("span.JguWG")
     routes = soup.select("span.thpSa")
     date_tags = soup.select("span:has(b)")
-    rating_svgs = soup.select("svg.evwcZ")  # todos los svg con rating
 
-    # sacar solo fechas tipo "marzo de 2026"
+    # Fechas tipo "marzo de 2026"
     dates = []
     for d in date_tags:
         text = d.get_text()
@@ -44,10 +43,8 @@ def extract_reviews(driver):
                 dates.append(b.get_text(strip=True))
 
     blacklist = BLACKLIST
-
     route_index = 0
     date_index = 0
-    rating_index = 0
 
     for review_tag in review_spans:
         review_text = review_tag.get_text(strip=True)
@@ -77,19 +74,56 @@ def extract_reviews(driver):
 
         # --- rating ---
         overall_rating = None
-        # busco el SVG más cercano al review_tag dentro del mismo bloque
-        parent_block = review_tag.find_parent("div", class_="YibKl")
-        if parent_block:
-            svg_tag = parent_block.select_one("div.VVbkp svg title")
-            if svg_tag:
-                match = re.search(r"(\d) de 5", svg_tag.get_text())
-                if match:
-                    overall_rating = int(match.group(1))
+        try:
+            container = review_tag.find_parent()
+            svg = container.find_previous("svg", class_="evwcZ") or container.find_next("svg", class_="evwcZ")
+            if svg:
+                title = svg.find("title")
+                if title:
+                    text = title.get_text()
+                    match = re.search(r"(\d)\s*de\s*5", text)
+                    if match:
+                        overall_rating = int(match.group(1))
+        except:
+            pass
+
+        # --- origen del usuario ---
+        # --- origen del usuario (CORREGIDO SEGÚN TU CAPTURA) ---
+        user_origin = "Desconocido"
+        try:
+            # 1. Buscamos el bloque del autor que está justo antes del texto de la reseña
+            # En tu imagen la clase es "QIHsu"
+            author_box = review_tag.find_previous("div", class_="QIHsu")
+            
+            if author_box:
+                # 2. Buscamos la sección de datos (vYLts)
+                geo_section = author_box.find("div", class_="vYLts")
+                if geo_section:
+                    # Buscamos los elementos de texto (biGQs)
+                    # En tu imagen, la ubicación es un div con clase 'navcl'
+                    candidates = geo_section.find_all("div", class_="biGQs")
+                    for c in candidates:
+                        text = c.get_text(strip=True)
+                        
+                        # FILTROS CRÍTICOS:
+                        # - Que no contenga "contribu" (para saltar '1 contribución')
+                        # - Que no sea solo un número
+                        # - Que tenga la clase 'navcl' (el nombre de usuario NO la tiene, la ubicación SÍ)
+                        if (text and 
+                            "contribu" not in text.lower() and 
+                            not text.isdigit() and 
+                            "navcl" in c.get("class", [])):
+                            
+                            user_origin = text
+                            break # En cuanto encontramos la ciudad, paramos
+        except Exception:
+            pass
 
         # --- separar origin/destination ---
         if route_text and " - " in route_text:
             origin, destination = route_text.split(" - ", 1)
             data.append({
+                "origin_user": user_origin,
                 "origin": origin,
                 "destination": destination,
                 "flight_type": flight_type,
