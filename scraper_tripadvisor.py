@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 import os
 import re
 
+# prueba maria
 OUTPUT_FILE = "tripadvisor_reviews.csv"
 
 BLACKLIST = [
