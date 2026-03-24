@@ -6,7 +6,7 @@ import os
 import re
 
 # prueba maria
-OUTPUT_FILE = "tripadvisor_reviews.csv"
+OUTPUT_FILE = "tripadvisor_reviews_uno.csv"
 
 BLACKLIST = [
     "hola",

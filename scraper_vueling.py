@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 import os
 import re
 
-OUTPUT_FILE = "tripadvisor_reviews2.csv" # archivo final
+OUTPUT_FILE = "tripadvisor_reviews.csv" # archivo final
 
 
 def connect_to_chrome():
