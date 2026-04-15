@@ -31,17 +31,23 @@ AIRLINES = [
     #    "url": "https://www.tripadvisor.es/Airline_Review-d10823588-Reviews-Iberia-Express",
     #    "output": "iberia_express.csv"
     #},
+    #{
+    #    "name": "Binter",
+    #    "prefix": "IBB",
+    #    "url": "https://www.tripadvisor.es/Airline_Review-d8729034-Reviews-Binter",
+    #    "output": "binter.csv"
+    #},
+    #{
+    #    "name": "Air Europa",
+    #    "prefix": "AEA",
+    #    "url": "https://www.tripadvisor.es/Airline_Review-d8729002-Reviews-Air-Europa",
+    #    "output": "air_europa.csv"
+    #}
     {
-        "name": "Binter",
-        "prefix": "IBB",
-        "url": "https://www.tripadvisor.es/Airline_Review-d8729034-Reviews-Binter",
-        "output": "binter.csv"
-    },
-    {
-        "name": "Air Europa",
-        "prefix": "AEA",
-        "url": "https://www.tripadvisor.es/Airline_Review-d8729002-Reviews-Air-Europa",
-        "output": "air_europa.csv"
+        "name": "Ryanair",
+        "prefix": "RYR",
+        "url": "https://www.tripadvisor.es/Airline_Review-d8729141-Reviews-Ryanair",
+        "output": "ryanair.csv"
     }
 ]
 
