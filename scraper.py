@@ -19,18 +19,18 @@ AIRLINES = [
     #    "url": "https://www.tripadvisor.es/Airline_Review-d8729089-Reviews-Iberia",
     #    "output": "iberia.csv"
     #},
-    {
-        "name": "Volotea",
-        "prefix": "VOE",
-        "url": "https://www.tripadvisor.es/Airline_Review-d10533097-Reviews-Volotea",
-        "output": "volotea.csv"
-    },
-    {
-        "name": "Iberia Express",
-        "prefix": "IBS",
-        "url": "https://www.tripadvisor.es/Airline_Review-d10823588-Reviews-Iberia-Express",
-        "output": "iberia_express.csv"
-    },
+    #{
+    #    "name": "Volotea",
+    #    "prefix": "VOE",
+    #    "url": "https://www.tripadvisor.es/Airline_Review-d10533097-Reviews-Volotea",
+    #    "output": "volotea.csv"
+    #},
+    #{
+    #    "name": "Iberia Express",
+    #    "prefix": "IBS",
+    #    "url": "https://www.tripadvisor.es/Airline_Review-d10823588-Reviews-Iberia-Express",
+    #    "output": "iberia_express.csv"
+    #},
     {
         "name": "Binter",
         "prefix": "IBB",
